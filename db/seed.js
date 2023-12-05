@@ -2,6 +2,9 @@ const client = require('./client.js');
 const { createOwners } = require('./owners.js');
 const { createRobots } = require('./robots.js');
 const { createTasks } = require('./tasks.js');
+const {createRobotOwners } = require('./robot_owners.js');
+const {createRobotTasks } = require('./robot_tasks.js');
+
 
 const dropTables = async() => {
     try{
@@ -59,7 +62,36 @@ const createTables = async() => {
     } catch (err) {
         console.log(err);
     }
+};
+
+const getRobotAndOwners = async() => {
+    try {
+        const {rows } = await client.query(`
+            SELECT robots.name AS robotName, owners.first_name AS ownersName
+            FROM robots
+            JOIN robot_owners on robots.id = robot_owners.robot_id
+            JOIN owners ON owners.id = robot_owners.owner_id;
+        `);
+        console.log(rows);
+    } catch (err) {
+        console.log(err);
+    }
 }
+
+const getRobotAndTasks = async() => {
+    try {
+        const { rows } = await client.query(`
+            SELECT robots.name AS robotName, tasks.name AS taskName
+            FROM robots
+            JOIN robot_tasks on robots.id = robot_tasks.robot_id
+            JOIN tasks ON tasks.id = robot_tasks.task_id;
+        `);
+        console.log(rows);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 
 const syncAndSeed = async() => {
     await client.connect();
@@ -82,6 +114,16 @@ const syncAndSeed = async() => {
   const owner1 = await createOwners('somaan', 'iqbal', '123@example.com');
   console.log(owner1);
   console.log('owners created!');
+
+  await createRobotOwners(robot1.id, owner1.id);
+  console.log(`robotOwners created`);
+
+  await createRobotTasks(robot1.id, task1.id);
+  console.log(`robotTasks created`);
+
+await getRobotAndOwners();
+
+await getRobotAndTasks();
 
   client.end();
 }
