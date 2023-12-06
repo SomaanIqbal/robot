@@ -104,10 +104,12 @@ const syncAndSeed = async() => {
   console.log(`CREATED TABLES!`);
 
   const robot1 = await createRobots('hercules', '1A', 13, 'n/a', 12 , true, 20231204);
+  const robot2 = await createRobots('posoiden', '1A', 13, 'n/a', 12 , true, 20231204);
   console.log(robot1);
   console.log('robot created!');
 
   const task1 = await createTasks('mopping');
+  const task2 = await createTasks('sweeping');
   console.log(task1);
   console.log('created task!');
 
@@ -119,6 +121,8 @@ const syncAndSeed = async() => {
   console.log(`robotOwners created`);
 
   await createRobotTasks(robot1.id, task1.id);
+  await createRobotTasks(robot1.id, task2.id);
+  await createRobotTasks(robot2.id, task2.id);
   console.log(`robotTasks created`);
 
 await getRobotAndOwners();
